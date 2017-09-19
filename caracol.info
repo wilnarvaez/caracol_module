@@ -1,0 +1,12 @@
+name = Caracol Module
+description = Module for deploying information a type of content to choose.
+core = 7.x
+dependencies[] = block
+package = Caracol
+files[] = caracol.module
+files[] = caracol.install
+files[] = caracol.admin.inc
+version = "0.1"
+
+; NEW LINE
+configure = admin/config/content/caracol

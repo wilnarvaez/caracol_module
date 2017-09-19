@@ -1,0 +1,23 @@
+<?php
+/**
+ * @file
+ * Caracol_Module install file.
+ */
+
+/**
+* Implements hook_install().
+*/
+function caracol_install(){
+  variable_set('caracol_content_type','article');
+  variable_set('caracol_quantity_content',5);
+  variable_set('caracol_filter','collapsed');
+}
+
+/**
+* Implements hook_uninstall().
+*/
+function caracol_uninstall(){
+  variable_del('caracol_content_type');
+  variable_del('caracol_quantity_content');
+  variable_del('caracol_filter');
+}

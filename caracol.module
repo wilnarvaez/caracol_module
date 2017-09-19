@@ -1,0 +1,74 @@
+<?php
+
+/**
+ * @file
+ * Caracol_Module features.
+ */
+include_once 'caracol.admin.inc';
+
+/**
+* Implements hook_info().
+*/
+function caracol_block_info(){
+  $blocks['caracol_content_type'] = array(
+    'info' => t('Block Caracol'),
+  );
+  return $blocks;
+}
+
+/**
+* Implements hook_block_view().
+*/
+function caracol_block_view($delta = ''){
+  //variables caracol module
+  $contentType = variable_get('caracol_content_type');
+  $quantity = variable_get('caracol_quantity_content');
+  $filter = variable_get('caracol_filter');
+
+  $block['subject'] = '';
+  $block['content'] = '';
+
+  //is consulted by the most recent content type and filtered based on the configuration of the caracol module.
+  //se consulta los más recientes por tipo de contenido y se filtra basándose en la configuración del módulo caracol.
+  $query = db_select('node', 'n')
+    ->condition('type', $contentType,'=')
+    ->fields('n')
+    ->orderBy('n.changed', 'DESC')
+    ->range(0, $quantity);
+  $result = $query->execute();
+
+  //choose how the list is to be rendered
+  switch ($filter) {
+    case 'collapsed':
+      $block['content'] .= '<ul class="menu clearfix">';
+        foreach ($result as $obj) {
+          $block['content'] .= '<li class="collapsed">' . l($obj->title, "node/" . $obj->nid) . '</li>';
+        }
+          $block['content'] .= '</ul>';
+      break;
+
+    case 'dots':
+      $block['content'] .= '<ul>';
+        foreach ($result as $obj) {
+          $block['content'] .= '<li>' . l($obj->title, "node/" . $obj->nid) . '</li>';
+        }
+      $block['content'] .= '</ul>';
+      break;
+
+    case 'ordered':
+      $block['content'] .= '<ol>';
+        foreach ($result as $obj) {
+          $block['content'] .= '<li>' . l($obj->title, "node/" . $obj->nid) . '</li>';
+        }
+      $block['content'] .= '</ol>';
+      break;
+
+    default:
+      $block['content'] .= '<ul class="menu clearfix">';
+        foreach ($result as $obj) {
+          $block['content'] .= '<li class="collapsed">' . l($obj->title, "node/" . $obj->nid) . '</li>';
+        }
+      $block['content'] .= '</ul>';
+  }
+  return $block;
+}
